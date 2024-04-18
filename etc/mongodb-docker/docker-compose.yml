@@ -21,6 +21,6 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: passpj03
-      ME_CONFIG_MONGODB_URL: "mongodb://root:example@mongo-ams2-pj03:27017/"
+      ME_CONFIG_MONGODB_URL: "mongodb://root:passpj03@mongo-ams2-pj03:27017/"
 volumes:
   mongo-data:
