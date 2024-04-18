@@ -2,7 +2,7 @@
 
 # Estructura de Carpetes API
 
-Dins del directori `api`, trobem diverses subcarpetes que organitzen el codi de l'aplicació segons diferents responsabilitats. Aquesta estructura ajuda a mantenir el codi net, modular i fàcil de mantenir.
+Dins del directori `api`, trobem diverses subcarpetes que organitzen el codi de l'aplicació segons diferents responsabilitats. Aquesta estructura ajuda a mantenir el codi net, modular i fàcil de mantenir..
 
 ## controllers
 
