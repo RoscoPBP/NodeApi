@@ -3,7 +3,8 @@ const readline = require('readline');
 const dbConfig = require('./config/db');
 const mongoose = require('mongoose');
 
-const dictionaryPath = '../data/DISC2-LP/DISC2/DISC2-LP.txt';
+const dictionaryPath = '/root/NodeApi/data/DISC2/DISC2-LP.txt';
+
 const language = "CA";
 
 // Define the Mongoose schema for posts
@@ -18,6 +19,7 @@ const WordSchema = new mongoose.Schema({
 const Word = mongoose.model('word' + language, WordSchema);
 
 function processWord(word) {
+  console.log("word processing..", word.word);
   const processed = {
     word: String(word.word),
     position: Number(word.position),
@@ -34,6 +36,7 @@ async function readTXT(filePath, language) {
     fs.access(filePath, fs.constants.F_OK, (err) => {
         let currentLine = 1;
         if (err) {
+	    console.log(err);
             console.error('File does not exist or cannot be accessed.');
             return;
         }
@@ -67,6 +70,7 @@ async function readTXT(filePath, language) {
 
 
 async function insertWords(posts) {
+  console.log("Before connecting to MongoDB");
   await mongoose.connect(dbConfig.MONGODB_URI);
   const processedWords = posts.map(processWord);
   await Word.insertMany(processedWords);
