@@ -16,7 +16,7 @@ const WordSchema = new mongoose.Schema({
 });
 
 // Compile model from schema
-const Word = mongoose.model('word' + language, WordSchema);
+const Word = mongoose.model('dictionaryCA', WordSchema);
 
 function processWord(word) {
   console.log("word processing..", word.word);
