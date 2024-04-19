@@ -54,7 +54,7 @@ async function readTXT(filePath, language) {
         rl.on('line', (line) => {
             //console.log('Line:', line, currentLine);
             const objWord = {word:line, position:currentLine, language:language, timesUsed:0};
-            wordList.push(objWord);
+            wordList.push(processWord(objWord));
             currentLine += 1;
             console.log(objWord)
         });
@@ -69,11 +69,10 @@ async function readTXT(filePath, language) {
 }
 
 
-async function insertWords(posts) {
+async function insertWords(words) {
   console.log("Before connecting to MongoDB");
   await mongoose.connect(dbConfig.MONGODB_URI);
-  const processedWords = posts.map(processWord);
-  await Word.insertMany(processedWords);
+  await Word.insertMany(words);
   await mongoose.disconnect();
 }
 
@@ -83,9 +82,9 @@ async function main() {
     try {
         const words = await readTXT(dictionaryPath, language);
         await insertWords(words);
-        console.log('Posts inserted into the MongoDB database.');
+        console.log('Words inserted into the MongoDB database.');
     } catch (error) {
-        console.error('Error processing XML or inserting into MongoDB:', error);
+        console.error('Error processing or inserting into MongoDB:', error);
     }
 }
 
