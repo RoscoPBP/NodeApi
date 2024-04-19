@@ -64,8 +64,10 @@ async function readTXT(filePath, language) {
             console.log('File reading completed.');
         });
 
-        return wordList;
+        
     });
+
+    return wordList;
 }
 
 
