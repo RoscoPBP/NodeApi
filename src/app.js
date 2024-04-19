@@ -27,6 +27,38 @@ app.post('/api/events', async (req, res) => {
   }
 });
 
+app.post('/api/user/register', async (req, res) => {
+  try {
+    const body = (req.body);
+    console.log("en user/register")
+    res.status(200).send("recibido 200");
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
+
+app.post('/api/user/update', async (req, res) => {
+  try {
+    const body = (req.body);
+    console.log("en user/update")
+    res.status(200).send("recibido 200");
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
+
+app.get('/api/dictionary/:lang/:max/:len', async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).send("L'esdeveniment no s'ha trobat.");
+    }
+    res.send(event);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 app.get('/api/events/:id', async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
