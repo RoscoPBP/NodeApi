@@ -16,10 +16,9 @@ const WordSchema = new mongoose.Schema({
 });
 
 // Compile model from schema
-const Word = mongoose.model('dictionaryCA', WordSchema);
+const Word = mongoose.model(language+'Diccionario', WordSchema);
 
 function processWord(word) {
-  console.log("word processing..", word.word);
   const processed = {
     word: String(word.word),
     position: Number(word.position),
@@ -30,20 +29,11 @@ function processWord(word) {
   return processed;
 }
 
-function readTXT(filePath, language) {
-    //var wordList = [];
-
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        let currentLine = 1;
-        if (err) {
-	    console.log(err);
-            console.error('File does not exist or cannot be accessed.');
-            return;
-        }
-        
-        console.log('File exists.');
-    
-        const fileStream = fs.createReadStream(dictionaryPath);
+async function readTXT(filePath, language) {
+    let currentLine = 1;
+    let dummyList = []
+    try {
+        const fileStream = fs.createReadStream(filePath);
     
         const rl = readline.createInterface({
             input: fileStream,
@@ -51,52 +41,45 @@ function readTXT(filePath, language) {
         });
     
         // Read each line, create object and push it into the array
-        rl.on('line', async (line) => {
-            //console.log('Line:', line, currentLine);
+        rl.on('line', (line) => {
             const objWord = {word:line, position:currentLine, language:language, timesUsed:0};
-            insertWord(processWord(objWord));
             currentLine += 1;
-            console.log(objWord)
+
+            dummyList.push(processWord(objWord));
+            if (dummyList.length > 3999) {
+                insertWords(dummyList);
+                dummyList = [];
+            }
+            
         });
     
         // Close the readline interface when done
-        rl.on('close', () => {
+        rl.on('close', async () => {
+            if (dummyList.length > 0) {
+                insertWords(dummyList);
+                dummyList = [];
+            }
             console.log('File reading completed.');
+            
         });
-
-        
-    });
-
-    //return wordList;
-}
-
-
-function insertWord(word) {
-  
-  //await Word.insertMany(words);
-  Word.create(word)
-  
-}
-
-function main() {
-    console.log("Script to introduce txt data to mongo Dictionary collection");
-    
-    try {
-        console.log("Before connecting to MongoDB");
-        //mongoose.connect(dbConfig.MONGODB_URI);
-        mongoose
-        .connect(dbConfig.MONGODB_URI, { useNewUrlParser: true })
-        .catch((e) => {
-            console.log(e);
-            process.exit(0);
-        });
-        readTXT(dictionaryPath, language);
-        
-        console.log('Words inserted into the MongoDB database.');
-        mongoose.disconnect();
     } catch (error) {
-        console.error('Error processing or inserting into MongoDB:', error);
+        console.error('Error reading TXT file:', error);
     }
+}
+
+
+async function insertWords(wordList) {
+    await mongoose.connect(dbConfig.MONGODB_URI);
+    await Word.insertMany(wordList);
+    console.log("insertado array...")
+    
+  }
+
+async function main() {
+    console.log("Script to introduce txt data to mongo Dictionary collection");
+    await readTXT(dictionaryPath, language);
+    console.log('Words inserted into the MongoDB database.');
+    
 }
 
 main();
