@@ -84,14 +84,12 @@ function main() {
     try {
         console.log("Before connecting to MongoDB");
         //mongoose.connect(dbConfig.MONGODB_URI);
-        mongoose.connect(
-            dbConfig.MONGODB_URI,
-            options,
-            (err) => {
-             if(err) console.log(err) 
-             else console.log("mongdb is connected");
-            }
-          );
+        mongoose
+        .connect(dbConfig.MONGODB_URI, { useNewUrlParser: true })
+        .catch((e) => {
+            console.log(e);
+            process.exit(0);
+        });
         readTXT(dictionaryPath, language);
         
         console.log('Words inserted into the MongoDB database.');
