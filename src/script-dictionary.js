@@ -30,7 +30,7 @@ function processWord(word) {
   return processed;
 }
 
-async function readTXT(filePath, language) {
+function readTXT(filePath, language) {
     //var wordList = [];
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
@@ -54,7 +54,7 @@ async function readTXT(filePath, language) {
         rl.on('line', async (line) => {
             //console.log('Line:', line, currentLine);
             const objWord = {word:line, position:currentLine, language:language, timesUsed:0};
-            await insertWord(processWord(objWord));
+            insertWord(processWord(objWord));
             currentLine += 1;
             console.log(objWord)
         });
@@ -71,23 +71,23 @@ async function readTXT(filePath, language) {
 }
 
 
-async function insertWord(word) {
+function insertWord(word) {
   
   //await Word.insertMany(words);
-  await Word.create(word)
+  Word.create(word)
   
 }
 
-async function main() {
+function main() {
     console.log("Script to introduce txt data to mongo Dictionary collection");
     
     try {
         console.log("Before connecting to MongoDB");
-        await mongoose.connect(dbConfig.MONGODB_URI);
-        await readTXT(dictionaryPath, language);
+        mongoose.connect(dbConfig.MONGODB_URI);
+        readTXT(dictionaryPath, language);
         
         console.log('Words inserted into the MongoDB database.');
-        await mongoose.disconnect();
+        mongoose.disconnect();
     } catch (error) {
         console.error('Error processing or inserting into MongoDB:', error);
     }
