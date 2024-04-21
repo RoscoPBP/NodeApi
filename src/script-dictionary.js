@@ -3,7 +3,7 @@ const readline = require('readline');
 const dbConfig = require('./config/db');
 const mongoose = require('mongoose');
 
-const dictionaryPath = '../data/DISC2/DISC2-LP.txt';
+const dictionaryPath = '/root/NodeApi/data/DISC2/DISC2-LP.txt';
 
 const language = "CA";
 
@@ -78,7 +78,7 @@ async function insertWords(wordList) {
 async function main() {
     console.log("Script to introduce txt data to mongo Dictionary collection");
     await readTXT(dictionaryPath, language);
-    console.log('Words inserted into the MongoDB database.');
+    //console.log('Words inserted into the MongoDB database.');
     
 }
 
