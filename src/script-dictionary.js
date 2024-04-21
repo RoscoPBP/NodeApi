@@ -3,7 +3,7 @@ const readline = require('readline');
 const dbConfig = require('./config/db');
 const mongoose = require('mongoose');
 
-const dictionaryPath = '/root/NodeApi/data/DISC2/DISC2-LP.txt';
+const dictionaryPath = '../data/DISC2/DISC2-LP.txt';
 
 const language = "CA";
 
@@ -31,7 +31,7 @@ function processWord(word) {
 }
 
 async function readTXT(filePath, language) {
-    var wordList = [];
+    //var wordList = [];
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         let currentLine = 1;
@@ -51,10 +51,10 @@ async function readTXT(filePath, language) {
         });
     
         // Read each line, create object and push it into the array
-        rl.on('line', (line) => {
+        rl.on('line', async (line) => {
             //console.log('Line:', line, currentLine);
             const objWord = {word:line, position:currentLine, language:language, timesUsed:0};
-            wordList.push(processWord(objWord));
+            await insertWord(processWord(objWord));
             currentLine += 1;
             console.log(objWord)
         });
@@ -67,24 +67,27 @@ async function readTXT(filePath, language) {
         
     });
 
-    return wordList;
+    //return wordList;
 }
 
 
-async function insertWords(words) {
-  console.log("Before connecting to MongoDB");
-  await mongoose.connect(dbConfig.MONGODB_URI);
-  await Word.insertMany(words);
-  await mongoose.disconnect();
+async function insertWord(word) {
+  
+  //await Word.insertMany(words);
+  await Word.create(word)
+  
 }
 
 async function main() {
     console.log("Script to introduce txt data to mongo Dictionary collection");
     
     try {
-        const words = await readTXT(dictionaryPath, language);
-        await insertWords(words);
+        console.log("Before connecting to MongoDB");
+        await mongoose.connect(dbConfig.MONGODB_URI);
+        await readTXT(dictionaryPath, language);
+        
         console.log('Words inserted into the MongoDB database.');
+        await mongoose.disconnect();
     } catch (error) {
         console.error('Error processing or inserting into MongoDB:', error);
     }
