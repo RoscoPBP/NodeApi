@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dbConfig = require('./config/db');
 const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
+const dbManager = require('./mongoManager');
 const app = express();
 
 app.use(express.json());
@@ -28,12 +29,22 @@ app.post('/api/events', async (req, res) => {
 });
 
 app.post('/api/user/register', async (req, res) => {
+  let response = {};
+  response.data = {};
+  console.log("en user/register")
   try {
     const body = (req.body);
-    console.log("en user/register")
+    console.log("request body: "+body)
+
+    dbManager.startUserInsertProcess(body);
+
+    response.status = "OK";
+    response.message = "User added";
     res.status(200).send("recibido 200");
   } catch (err) {
-    res.status(400).send(err.message);
+    response.status = "400";
+    response.message = "ERROR";
+    res.status(400).send(response);
   }
 });
 

@@ -14,7 +14,20 @@ const UserSchema = new mongoose.Schema({
   aboutMe: String,
 });
 
+// Defineix l'esquema per User
+const roscodromUserSchema = new mongoose.Schema({
+  uuid: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  name: String,
+  email: String,
+  phone: String,
+  api_key: String
+});
+
 // Compila i exporta el model User
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model('Users', roscodromUserSchema);
 
 module.exports = User;
