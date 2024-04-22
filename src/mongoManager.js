@@ -48,8 +48,10 @@ async function startUserInsertProcess(user) {
             console.log("Usuario ya existe");
             // Determine which field is duplicated
             if (existingUser.email === user.email) {
+                console.log("email ya existe");
                 throw new Error("Email already exists");
             }else if (existingUser.name === user.name) {
+                console.log("name ya existe");
                 throw new Error("Name already exists");
             } 
             return;
