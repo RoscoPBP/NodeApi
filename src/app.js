@@ -62,15 +62,15 @@ app.post('/api/user/update', async (req, res) => {
     console.log("request body: " + JSON.stringify(body))
 
     // Check if the request body has at least one of the required attributes
-    if (!body.name && !body.email && !body.avatar) {
-      throw new Error("At least one of the attributes 'name', 'email', or 'avatar' is required.");
+    if (!body.name && !body.email && !body.avatar && !body.phone_number) {
+      throw new Error("At least one of the attributes 'name', 'email', 'avatar', or 'phone_number' is required.");
     }
 
     // Extract the api_key from the request body
     const api_key = body.api_key;
 
     // Find the user by api_key
-    const user = await User.findOne({ api_key });
+    const user = await User.findOne({ api_key:api_key });
 
     // If no user found or multiple users found, throw an error
     if (!user) {
@@ -85,9 +85,10 @@ app.post('/api/user/update', async (req, res) => {
     if (body.name) updateData.name = body.name;
     if (body.email) updateData.email = body.email;
     if (body.avatar) updateData.avatar = body.avatar;
+    if (body.phone) updateData.phone = body.phone;
 
     // Update the user document
-    await User.updateOne({ api_key }, { $set: updateData });
+    await User.updateOne({ api_key:api_key }, { $set: updateData });
 
     // Send the response
     response.status = "OK";
