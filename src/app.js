@@ -80,8 +80,8 @@ app.post('/api/dictionary/list', async (req, res) => {
       return res.status(400).send(response);
     }
     
-    const min = pagina * cantidad;
-    const max = pagina * cantidad + cantidad;
+    const min = page * amount;
+    const max = page * amount + amount;
 
     let WordSchema = getWordSchema(lang);
     const word = await WordSchema.find({ position: { $gte: min, $lte: max } });
