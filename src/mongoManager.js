@@ -41,7 +41,7 @@ function startUserInsertProcess(user) {
 async function insertUser(user) {
     await mongoose.connect(config.MONGODB_URI);
     const processedUser = processUser(user);
-    await User.updateOne(processedUser);
+    await User.updateOne({ uuid: processedUser.uuid }, processedUser, { upsert: true });
     await mongoose.disconnect();
 }
 
