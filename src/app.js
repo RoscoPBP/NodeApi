@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const dbConfig = require('./config/db');
 const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
+const Word = require('./api/models/word');
 const dbManager = require('./mongoManager');
+const getWordSchema = require('./api/models/word');
 const app = express();
 
 app.use(express.json());
@@ -36,7 +38,7 @@ app.post('/api/user/register', async (req, res) => {
     const body = (req.body);
     console.log("request body: "+JSON.stringify(body))
 
-    const api_key= await dbManager.startUserInsertProcess(body);
+    const api_key = await dbManager.startUserInsertProcess(body);
     console.log("api key desde endpoint:"+api_key );
     response.data.api_key = api_key;
     response.status = "OK";
@@ -60,13 +62,41 @@ app.post('/api/user/update', async (req, res) => {
   }
 });
 
-app.get('/api/dictionary/:lang/:max/:len', async (req, res) => {
+app.post('/api/dictionary/list', async (req, res) => {
+  let response = {};
+  response.data = {};
+  console.log('/api/dictionary/list');
+  
   try {
+    const body = (req.body);
+    console.log("request body: "+JSON.stringify(body))
     const event = await Event.findById(req.params.id);
     if (!event) {
       return res.status(404).send("L'esdeveniment no s'ha trobat.");
     }
-    res.send(event);
+
+    response.status = "OK";
+    response.message = "Sending page";
+    res.status(200).send(response);
+
+  } catch (err) {
+    console.log(err);
+    response.status = "400";
+    response.message = "ERROR: " + err.message; 
+    res.status(400).send(response);
+  }
+});
+
+app.get('/api/dictionary/:country/lenght', async (req, res) => {
+  try {
+    let WordSchema = getWordSchema(req.params.country);
+    console.log(WordSchema.toString);
+    const count = await WordSchema.countDocuments();
+    console.log(count);
+    if (count) {
+      return res.status(404).send("L'esdeveniment no s'ha trobat.");
+    }
+    res.send(count);
   } catch (err) {
     res.status(500).send(err.message);
   }

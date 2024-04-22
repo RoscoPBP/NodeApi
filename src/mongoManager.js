@@ -6,6 +6,8 @@ const crypto = require('crypto');
 const User = require('./api/models/user');
 const Img = require('./api/models/image');
 
+const { throws } = require('assert');
+
 function processUser(user) {
     const processed = {
         name: String(user.name),
@@ -47,10 +49,10 @@ async function startUserInsertProcess(user) {
             // Determine which field is duplicated
             if (existingUser.email === user.email) {
                 throw new Error("Email already exists");
-            }
-            if (existingUser.name === user.name) {
-                throw new Error("Nickname already exists");
-            }
+            }else if (existingUser.name === user.name) {
+                throw new Error("Name already exists");
+            } 
+            return;
         }
 
         console.log("antes de inserir user");
@@ -60,12 +62,13 @@ async function startUserInsertProcess(user) {
             console.log("antes de inserir user image");
             await insertImage(user);
         }
+
+        return api_key;
     } finally {
         if (connection) {
             await connection.disconnect();
         }
-	console.log("api key: "+api_key);
-        return api_key;
+   
     }
 }
 
