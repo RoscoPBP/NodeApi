@@ -135,8 +135,8 @@ app.post('/api/dictionary/list', async (req, res) => {
       min = 0;
       max = amount;
     } else {
-      min = page * amount;
-      max = page * amount + amount;
+      min = page * amount - amount + 1;
+      max = page * amount;
     }
 
     let WordSchema = getWordSchema(lang);
