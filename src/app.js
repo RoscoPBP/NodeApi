@@ -4,6 +4,7 @@ const dbConfig = require('./config/db');
 const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
 const Word = require('./api/models/word');
+const User = require('./api/models/user');
 const dbManager = require('./mongoManager');
 const getWordSchema = require('./api/models/word');
 const app = express();
@@ -53,12 +54,50 @@ app.post('/api/user/register', async (req, res) => {
 });
 
 app.post('/api/user/update', async (req, res) => {
+  let response = {};
+  response.data = {};
+  console.log("en user/update")
   try {
-    const body = (req.body);
-    console.log("en user/update")
-    res.status(200).send("recibido 200");
+    const body = req.body;
+    console.log("request body: " + JSON.stringify(body))
+
+    // Check if the request body has at least one of the required attributes
+    if (!body.name && !body.email && !body.avatar) {
+      throw new Error("At least one of the attributes 'name', 'email', or 'avatar' is required.");
+    }
+
+    // Extract the api_key from the request body
+    const api_key = body.api_key;
+
+    // Find the user by api_key
+    const user = await User.findOne({ api_key });
+
+    // If no user found or multiple users found, throw an error
+    if (!user) {
+      throw new Error("No user found with the provided api_key.");
+    } else if (user.length > 1) {
+      throw new Error("Multiple users found with the provided api_key.");
+    }
+
+    // If user found, update the user attributes
+    // Here, you can use the $set operator to update only the provided attributes
+    const updateData = {};
+    if (body.name) updateData.name = body.name;
+    if (body.email) updateData.email = body.email;
+    if (body.avatar) updateData.avatar = body.avatar;
+
+    // Update the user document
+    await User.updateOne({ api_key }, { $set: updateData });
+
+    // Send the response
+    response.status = "OK";
+    response.message = "User updated";
+    res.status(200).send(response);
   } catch (err) {
-    res.status(400).send(err.message);
+    console.log(err);
+    response.status = "400";
+    response.message = "ERROR: " + err.message;
+    res.status(400).send(response);
   }
 });
 
