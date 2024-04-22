@@ -16,11 +16,7 @@ const UserSchema = new mongoose.Schema({
 
 // Defineix l'esquema per User
 const roscodromUserSchema = new mongoose.Schema({
-  uuid: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  uuid: String,
   name: String,
   email: String,
   phone: String,

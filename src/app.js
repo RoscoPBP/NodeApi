@@ -34,13 +34,13 @@ app.post('/api/user/register', async (req, res) => {
   console.log("en user/register")
   try {
     const body = (req.body);
-    console.log("request body: "+body)
+    console.log("request body: "+JSON.stringify(body))
 
     dbManager.startUserInsertProcess(body);
 
     response.status = "OK";
     response.message = "User added";
-    res.status(200).send("recibido 200");
+    res.status(200).send(response);
   } catch (err) {
     response.status = "400";
     response.message = "ERROR";
