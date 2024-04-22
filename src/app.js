@@ -45,7 +45,7 @@ app.post('/api/user/register', async (req, res) => {
   } catch (err) {
     console.log(err);
     response.status = "400";
-    response.message = "ERROR";
+    response.message = "ERROR: " + err.message; 
     res.status(400).send(response);
   }
 });
