@@ -32,7 +32,8 @@ async function startUserInsertProcess(user) {
         connection = await mongoose.connect(config.MONGODB_URI);
 
         api_key = user.api_key = generateApiKey(32);
-        user.uuid = uuidv4();
+        user.api_key = api_key;
+	user.uuid = uuidv4();
 
         console.log("antes de inserir user");
         await insertUser(user);
@@ -45,7 +46,7 @@ async function startUserInsertProcess(user) {
         if (connection) {
             await connection.disconnect();
         }
-
+	console.log("api key: "+api_key);
         return api_key;
     }
 }

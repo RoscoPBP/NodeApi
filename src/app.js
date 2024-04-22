@@ -37,12 +37,13 @@ app.post('/api/user/register', async (req, res) => {
     console.log("request body: "+JSON.stringify(body))
 
     const api_key= dbManager.startUserInsertProcess(body);
-
+    console.log("api key desde endpoint:"+api_key );
     response.data.api_key = api_key;
     response.status = "OK";
     response.message = "User added";
     res.status(200).send(response);
   } catch (err) {
+    console.log(err);
     response.status = "400";
     response.message = "ERROR";
     res.status(400).send(response);
