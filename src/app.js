@@ -70,13 +70,28 @@ app.post('/api/dictionary/list', async (req, res) => {
   try {
     const body = (req.body);
     console.log("request body: "+JSON.stringify(body))
-    const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).send("L'esdeveniment no s'ha trobat.");
+    const lang = body.idioma;
+    const amount = body.cantidad;
+    const page = body.pagina;
+
+    if (!lang || !amount || !page) {
+      response.status = "400";
+      response.message = "ERROR: Missing required parameters";
+      return res.status(400).send(response);
+    }
+    
+    const min = pagina * cantidad;
+    const max = pagina * cantidad + cantidad;
+
+    let WordSchema = getWordSchema(lang);
+    const word = await WordSchema.find({ position: { $gte: min, $lte: max } });
+    if (word) {
+      return res.status(404).send("ERROR: Not found");
     }
 
     response.status = "OK";
     response.message = "Sending page";
+    response.data.pages = word;
     res.status(200).send(response);
 
   } catch (err) {
@@ -92,7 +107,6 @@ app.get('/api/dictionary/:country/lenght', async (req, res) => {
   response.data = {};
   try {
     let WordSchema = getWordSchema(req.params.country);
-    console.log(WordSchema.toString);
     const count = await WordSchema.countDocuments();
     console.log(count);
     if (count) {
