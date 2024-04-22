@@ -27,10 +27,11 @@ function processImage(user) {
 
 async function startUserInsertProcess(user) {
     let connection;
+    let api_key
     try {
         connection = await mongoose.connect(config.MONGODB_URI);
 
-        user.api_key = generateApiKey(32);
+        api_key = user.api_key = generateApiKey(32);
         user.uuid = uuidv4();
 
         console.log("antes de inserir user");
@@ -45,7 +46,7 @@ async function startUserInsertProcess(user) {
             await connection.disconnect();
         }
 
-        return user.api_key;
+        return api_key;
     }
 }
 
