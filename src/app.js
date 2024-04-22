@@ -85,7 +85,7 @@ app.post('/api/dictionary/list', async (req, res) => {
 
     let WordSchema = getWordSchema(lang);
     const word = await WordSchema.find({ position: { $gte: min, $lte: max } });
-    if (word) {
+    if (!word) {
       return res.status(404).send("ERROR: Not found");
     }
 
