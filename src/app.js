@@ -7,6 +7,7 @@ const Word = require('./api/models/word');
 const User = require('./api/models/user');
 const dbManager = require('./mongoManager');
 const getWordSchema = require('./api/models/word');
+const Img = require('./api/models/image');
 const app = express();
 
 app.use(express.json());
@@ -84,8 +85,12 @@ app.post('/api/user/update', async (req, res) => {
     const updateData = {};
     if (body.name) updateData.name = body.name;
     if (body.email) updateData.email = body.email;
-    if (body.avatar) updateData.avatar = body.avatar;
-    if (body.phone) updateData.phone = body.phone;
+    //if (body.avatar) updateData.avatar = body.avatar;
+    if (body.phone) updateData.phone = body.phone_number;
+
+    if (body.avatar) {
+      await Img.updateOne({ userUUID: user.uuid }, { userUUID: user.uuid , base64: body.avatar}, { upsert: true });
+    }
 
     // Update the user document
     await User.updateOne({ api_key:api_key }, { $set: updateData });
