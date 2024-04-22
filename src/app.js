@@ -30,6 +30,7 @@ app.post('/api/events', async (req, res) => {
 
 app.post('/api/user/register', async (req, res) => {
   let response = {};
+  response.data = {};
   console.log("en user/register")
   try {
     const body = (req.body);
