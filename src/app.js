@@ -85,8 +85,7 @@ app.post('/api/user/update', async (req, res) => {
     const updateData = {};
     if (body.name) updateData.name = body.name;
     if (body.email) updateData.email = body.email;
-    //if (body.avatar) updateData.avatar = body.avatar;
-    if (body.phone) updateData.phone = body.phone_number;
+    if (body.phone_number) updateData.phone = body.phone_number;
 
     if (body.avatar) {
       await Img.updateOne({ userUUID: user.uuid }, { userUUID: user.uuid , base64: body.avatar}, { upsert: true });
