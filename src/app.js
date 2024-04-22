@@ -75,7 +75,7 @@ app.post('/api/dictionary/list', async (req, res) => {
     const page = body.pagina;
 
     if (!lang || !amount || !page) {
-      response.status = "400";
+      response.status = "ERROR";
       response.message = "ERROR: Missing required parameters";
       return res.status(400).send(response);
     }
@@ -86,7 +86,9 @@ app.post('/api/dictionary/list', async (req, res) => {
     let WordSchema = getWordSchema(lang);
     const word = await WordSchema.find({ position: { $gte: min, $lte: max } });
     if (!word) {
-      return res.status(404).send("ERROR: Not found");
+      response.status = "ERROR";
+      response.message = "ERROR: Words not found";
+      return res.status(403).send(message);
     }
 
     response.status = "OK";
@@ -96,7 +98,7 @@ app.post('/api/dictionary/list', async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    response.status = "400";
+    response.status = "ERROR";
     response.message = "ERROR: " + err.message; 
     res.status(400).send(response);
   }
