@@ -7,9 +7,6 @@ const WordSchema = new mongoose.Schema({
     timesUsed: Number,
   });
 
-// Compila i exporta el model User
-const Img = mongoose.model('Images', ImageSchema);
-
 function getWordSchema(code) {
     const Word = mongoose.model(code+'_Diccionario', WordSchema);
     return Word;
