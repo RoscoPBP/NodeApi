@@ -88,17 +88,28 @@ app.post('/api/dictionary/list', async (req, res) => {
 });
 
 app.get('/api/dictionary/:country/lenght', async (req, res) => {
+  let response = {};
+  response.data = {};
   try {
     let WordSchema = getWordSchema(req.params.country);
     console.log(WordSchema.toString);
     const count = await WordSchema.countDocuments();
     console.log(count);
     if (count) {
-      return res.status(404).send("L'esdeveniment no s'ha trobat.");
+      response.status = "OK";
+      response.message = "Sending total words";
+      response.data.count = count;
+      return res.status(200).send(response);
     }
-    res.send(count);
+
+    response.status = "403";
+    response.message = "ERROR: Language not found"; 
+    res.send(response);
   } catch (err) {
-    res.status(500).send(err.message);
+    console.log(err);
+    response.status = "400";
+    response.message = "ERROR: " + err.message; 
+    res.status(500).send(response);
   }
 });
 
