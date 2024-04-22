@@ -66,7 +66,7 @@ async function startUserInsertProcess(user) {
         return api_key;
     } finally {
         if (connection) {
-            await connection.disconnect();
+            //await connection.disconnect();
         }
    
     }
