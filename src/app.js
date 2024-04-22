@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dbConfig = require('./config/db');
+const bodyParser = require('body-parser');
 const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
 const Word = require('./api/models/word');
