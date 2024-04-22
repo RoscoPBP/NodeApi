@@ -10,6 +10,10 @@ const getWordSchema = require('./api/models/word');
 const Img = require('./api/models/image');
 const app = express();
 
+// Use body-parser middleware with increased payload size limit
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(express.json());
 app.set('json spaces', 2);
 
