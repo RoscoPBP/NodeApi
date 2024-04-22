@@ -25,7 +25,9 @@ function processImage(user) {
     return processed;
 }
 
-function startUserInsertProcess(user) {
+async function startUserInsertProcess(user) {
+    await mongoose.connect(config.MONGODB_URI);
+
     user.api_key = generateApiKey(32);
     user.uuid = uuidv4();
 
@@ -36,20 +38,20 @@ function startUserInsertProcess(user) {
         console.log("antes de inserir user image");
         insertImage(user);
     }
+
+    await mongoose.disconnect();
 }
 
 async function insertUser(user) {
-    await mongoose.connect(config.MONGODB_URI);
+    //await mongoose.connect(config.MONGODB_URI);
     const processedUser = processUser(user);
     await User.updateOne({ uuid: processedUser.uuid }, processedUser, { upsert: true });
-    await mongoose.disconnect();
 }
 
 async function insertImage(user) {
-    await mongoose.connect(config.MONGODB_URI);
+    //await mongoose.connect(config.MONGODB_URI);
     const processedUser = processImage(user);
     await Img.updateOne(processedUser);
-    await mongoose.disconnect();
 }
 function generateApiKey(length = 64) {
     return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
