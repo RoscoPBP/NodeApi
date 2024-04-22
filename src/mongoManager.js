@@ -35,7 +35,7 @@ async function startUserInsertProcess(user) {
         user.api_key = api_key;
 	    user.uuid = uuidv4();
 
-        const existingUser = await User.findOne({
+        /*const existingUser = await User.findOne({
             $or: [
                 { email: user.email },
                 { nickname: user.nickname }
@@ -50,7 +50,7 @@ async function startUserInsertProcess(user) {
             if (existingUser.nickname === user.nickname) {
                 throw new Error("Nickname already exists");
             }
-        }
+        }*/
 
         console.log("antes de inserir user");
         await insertUser(user);
