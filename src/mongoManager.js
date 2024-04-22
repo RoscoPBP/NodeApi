@@ -19,7 +19,7 @@ function processUser(user) {
 
 function processImage(user) {
     const processed = {
-        userUuid: String(user.uuid),
+        userUUID: String(user.uuid),
         base64: String(user.avatar)
     };
     return processed;
@@ -53,8 +53,8 @@ async function insertUser(user) {
 }
 
 async function insertImage(user) {
-    const processedUser = processImage(user);
-    await Img.updateOne(processedUser, { upsert: true });
+    const processedImg = processImage(user);
+    await Img.updateOne(processedImg, { upsert: true });
 }
 
 function generateApiKey(length = 64) {
