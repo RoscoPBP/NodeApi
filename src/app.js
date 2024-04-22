@@ -30,13 +30,12 @@ app.post('/api/events', async (req, res) => {
 
 app.post('/api/user/register', async (req, res) => {
   let response = {};
-  response.data = {};
   console.log("en user/register")
   try {
     const body = (req.body);
     console.log("request body: "+JSON.stringify(body))
 
-    const api_key= dbManager.startUserInsertProcess(body);
+    const api_key= await dbManager.startUserInsertProcess(body);
     console.log("api key desde endpoint:"+api_key );
     response.data.api_key = api_key;
     response.status = "OK";
