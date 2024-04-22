@@ -36,8 +36,9 @@ app.post('/api/user/register', async (req, res) => {
     const body = (req.body);
     console.log("request body: "+JSON.stringify(body))
 
-    dbManager.startUserInsertProcess(body);
+    const api_key= dbManager.startUserInsertProcess(body);
 
+    response.data.api_key = api_key;
     response.status = "OK";
     response.message = "User added";
     res.status(200).send(response);
