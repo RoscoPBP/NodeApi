@@ -26,33 +26,37 @@ function processImage(user) {
 }
 
 async function startUserInsertProcess(user) {
-    await mongoose.connect(config.MONGODB_URI);
+    let connection;
+    try {
+        connection = await mongoose.connect(config.MONGODB_URI);
 
-    user.api_key = generateApiKey(32);
-    user.uuid = uuidv4();
+        user.api_key = generateApiKey(32);
+        user.uuid = uuidv4();
 
-    console.log("antes de inserir user");
-    insertUser(user);
+        console.log("antes de inserir user");
+        await insertUser(user);
 
-    if (user.hasOwnProperty('avatar')) {
-        console.log("antes de inserir user image");
-        insertImage(user);
+        if (user.hasOwnProperty('avatar')) {
+            console.log("antes de inserir user image");
+            await insertImage(user);
+        }
+    } finally {
+        if (connection) {
+            await connection.disconnect();
+        }
     }
-
-    await mongoose.disconnect();
 }
 
 async function insertUser(user) {
-    //await mongoose.connect(config.MONGODB_URI);
     const processedUser = processUser(user);
     await User.updateOne({ uuid: processedUser.uuid }, processedUser, { upsert: true });
 }
 
 async function insertImage(user) {
-    //await mongoose.connect(config.MONGODB_URI);
     const processedUser = processImage(user);
     await Img.updateOne(processedUser);
 }
+
 function generateApiKey(length = 64) {
     return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
 }
