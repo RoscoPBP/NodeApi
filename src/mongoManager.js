@@ -54,7 +54,7 @@ async function insertUser(user) {
 
 async function insertImage(user) {
     const processedImg = processImage(user);
-    await Img.updateOne(processedImg, { upsert: true });
+    await Img.updateOne({ userUUID: processedImg.userUUID }, processedImg, { upsert: true });
 }
 
 function generateApiKey(length = 64) {
