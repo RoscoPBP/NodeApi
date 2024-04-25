@@ -43,7 +43,7 @@ app.post('/api/user/register', async (req, res) => {
   console.log("en user/register")
   try {
     const body = (req.body);
-    console.log("request body: "+JSON.stringify(body))
+    //console.log("request body: "+JSON.stringify(body))
 
     const api_key = await dbManager.startUserInsertProcess(body);
     console.log("api key desde endpoint:"+api_key );
@@ -65,7 +65,7 @@ app.post('/api/user/update', async (req, res) => {
   console.log("en user/update")
   try {
     const body = req.body;
-    console.log("request body: " + JSON.stringify(body))
+    //console.log("request body: " + JSON.stringify(body))
 
     // Check if the request body has at least one of the required attributes
     if (!body.name && !body.email && !body.avatar && !body.phone_number) {
