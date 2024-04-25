@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const dictionaryPath = '/root/NodeApi/data/DISC2/DISC2-LP.txt';
 
-const language = "CA";
+const language = "ES";
 
 // Define the Mongoose schema for posts
 const WordSchema = new mongoose.Schema({

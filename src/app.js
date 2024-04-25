@@ -5,6 +5,7 @@ const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
 const Word = require('./api/models/word');
 const User = require('./api/models/user');
+const DictNames = require('./api/models/dictionary_names');
 const dbManager = require('./mongoManager');
 const getWordSchema = require('./api/models/word');
 const Img = require('./api/models/image');
@@ -175,6 +176,30 @@ app.get('/api/dictionary/:country/lenght', async (req, res) => {
 
     response.status = "403";
     response.message = "ERROR: Language not found"; 
+    res.send(response);
+  } catch (err) {
+    console.log(err);
+    response.status = "400";
+    response.message = "ERROR: " + err.message; 
+    res.status(500).send(response);
+  }
+});
+
+app.get('/api/dictionary/languages', async (req, res) => {
+  let response = {};
+  response.data = {};
+  try {
+    const dictionaries = await DictNames.find();
+
+    if (dictionaries) {
+      response.status = "OK";
+      response.message = "Sending total words";
+      response.data.languages = dictionaries;
+      return res.status(200).send(response);
+    }
+
+    response.status = "403";
+    response.message = "ERROR: Languge list not found"; 
     res.send(response);
   } catch (err) {
     console.log(err);
