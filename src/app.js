@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dbConfig = require('./config/db');
+const bodyParser = require('body-parser');
 const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
 const Word = require('./api/models/word');
@@ -43,7 +44,7 @@ app.post('/api/user/register', async (req, res) => {
   console.log("en user/register")
   try {
     const body = (req.body);
-    console.log("request body: "+JSON.stringify(body))
+    //console.log("request body: "+JSON.stringify(body))
 
     const api_key = await dbManager.startUserInsertProcess(body);
     console.log("api key desde endpoint:"+api_key );
@@ -65,7 +66,7 @@ app.post('/api/user/update', async (req, res) => {
   console.log("en user/update")
   try {
     const body = req.body;
-    console.log("request body: " + JSON.stringify(body))
+    //console.log("request body: " + JSON.stringify(body))
 
     // Check if the request body has at least one of the required attributes
     if (!body.name && !body.email && !body.avatar && !body.phone_number) {
@@ -135,8 +136,8 @@ app.post('/api/dictionary/list', async (req, res) => {
       min = 0;
       max = amount;
     } else {
-      min = page * amount;
-      max = page * amount + amount;
+      min = page * amount - amount + 1;
+      max = page * amount;
     }
 
     let WordSchema = getWordSchema(lang);
