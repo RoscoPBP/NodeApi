@@ -24,9 +24,25 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ALTA', async (data) => {
-    const resposta = await joc.altaJugador(data.nickname, data.apiKey);
-    console.log(resposta);
-    socket.emit('ALTA', resposta);
+      const parts = data.split(';');
+      let nickname, apiKey;
+
+      parts.forEach(part => {
+          const [key, value] = part.split('=');
+          if (key === 'ALTA') {
+              nickname = value;
+          } else if (key === 'API_KEY') {
+              apiKey = value;
+          }
+      });
+
+      if (nickname && apiKey) {
+          const resposta = await joc.altaJugador(nickname, apiKey);
+          console.log(resposta);
+          socket.emit('ALTA', resposta);
+      } else {
+          socket.emit('ALTA', { alta: false });
+      }
   });
 
   socket.on('PARAULA', () => {
