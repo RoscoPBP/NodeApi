@@ -18,6 +18,7 @@ class Joc {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
+          this.playersEspera = this.playersEspera.concat(this.playersJugant);
           this.enPartida = false;
         } else {
           this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
@@ -71,7 +72,7 @@ class Joc {
         const consonantesPocoUsadas = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z'];
     
         // Ensure at least two vowels are chosen
-        let chosenLetters = vocales.slice(0, 2);
+        let chosenLetters = [this.getRandomLetter(vocales), this.getRandomLetter(vocales)];
     
         // Calculate number of remaining letters needed
         const remainingLetters = Math.max(0, averageLength - 2);
@@ -81,11 +82,11 @@ class Joc {
             let random = Math.random();
             let letter;
             if (random < 0.7) {
-                letter = getRandomLetter(consonantesMuyUsadas);
+                letter = this.getRandomLetter(consonantesMuyUsadas);
             } else if (random < 0.9) {
-                letter = getRandomLetter(consonantesPocoUsadas);
+                letter = this.getRandomLetter(consonantesPocoUsadas);
             } else {
-                letter = getRandomLetter(vocales);
+                letter = this.getRandomLetter(vocales);
             }
             chosenLetters.push(letter);
         }
@@ -94,8 +95,13 @@ class Joc {
     }
     
     getRandomLetter(letters) {
+        if (letters.length === 0) {
+            // If the array is empty, return null
+            return null;
+        }
         const index = Math.floor(Math.random() * letters.length);
-        return letters.splice(index, 1)[0];
+        const letter = letters.splice(index, 1)[0];
+        return letter;
     }
   
     consultaTempsRestant() {
