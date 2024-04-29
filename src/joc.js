@@ -20,8 +20,10 @@ class Joc {
           this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
           this.enPartida = true;
           // Send "GAME START" message to players in the playersEspera list
+          console.log("enviando a jugadores");
           this.playersEspera.forEach(player => {
             const { socketId } = player;
+            console.log(socketId)
             io.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
           });
         }
@@ -38,6 +40,7 @@ class Joc {
 
         if (user) {
             this.playersEspera.push({socketId: sockerId, user: user});
+            console.log(sockerId);
             return { alta: true };
         } else {
             return { alta: false };
