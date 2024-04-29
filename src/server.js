@@ -23,9 +23,9 @@ io.on('connection', (socket) => {
     socket.emit('TEMPS_PER_INICI', resposta);
   });
 
-  socket.on('ALTA', (data) => {
-    console.log("en ALTA " + data);
-    const resposta = joc.altaJugador(data.nickname, data.apiKey);
+  socket.on('ALTA', async (data) => {
+    const resposta = await joc.altaJugador(data.nickname, data.apiKey);
+    console.log(resposta);
     socket.emit('ALTA', resposta);
   });
 
