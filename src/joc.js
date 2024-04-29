@@ -25,7 +25,7 @@ class Joc {
           this.playersEspera.forEach(player => {
             const { socketId } = player;
             console.log(socketId)
-            websocket.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
+            this.websocket.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
           });
         }
       }, this.partidaDuracio + this.pausaDuracio);
