@@ -7,7 +7,7 @@ const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server);
 
-const joc = new Joc(10000, 10000, io);  // 1 minut de partida, 1 minut de pausa
+const joc = new Joc(10000, 10000, io, "CA");  // 1 minut de partida, 1 minut de pausa
 
 io.on('connection', (socket) => {
   console.log('Usuari connectat');
