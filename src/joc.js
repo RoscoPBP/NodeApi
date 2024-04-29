@@ -1,11 +1,12 @@
 const User = require('./api/models/user');
 
 class Joc {
-    constructor(partidaDuracio, pausaDuracio) {
+    constructor(partidaDuracio, pausaDuracio, websocket) {
       this.partidaDuracio = partidaDuracio;
       this.pausaDuracio = pausaDuracio;
       this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
       this.enPartida = false;
+      this.websocket = websocket;
       this.playersJugant = [];
       this.playersEspera = [];
       this.iniciarCicle();
@@ -24,7 +25,7 @@ class Joc {
           this.playersEspera.forEach(player => {
             const { socketId } = player;
             console.log(socketId)
-            io.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
+            websocket.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
           });
         }
       }, this.partidaDuracio + this.pausaDuracio);
