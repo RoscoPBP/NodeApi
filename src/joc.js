@@ -26,9 +26,9 @@ class Joc {
           console.log("Empezando partida | enviando a jugadores");
           this.playersEspera.forEach(player => {
             const { socketId } = player;
-            console.log(socketId)
-            this.websocket.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
-          });
+            const letters = this.chooseLetters(this.averageLenght);
+            console.log(letters);
+            this.websocket.to(socketId).emit('INICI_PARTIDA', letters)});
 
           this.playersJugant = this.playersEspera;
           this.playersEspera = [];
@@ -54,12 +54,48 @@ class Joc {
                 }
             }
         ]);
-        
         const averageLength = averageLengthResult[0].averageLength;
-        
+
         console.log("Average word length:", averageLength);
 
-        return averageLength;
+        const onlineAttribute = Math.round(averageLength * (0.7 + Math.random() * 0.6)); // Random value between 0.7 and 1.3
+
+        console.log("Online attribute:", onlineAttribute);
+
+        return onlineAttribute;
+    }
+
+    chooseLetters(averageLength) {
+        const vocales = ['A', 'E', 'I', 'O', 'U'];
+        const consonantesMuyUsadas = ['L', 'N', 'S', 'T', 'R'];
+        const consonantesPocoUsadas = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z'];
+    
+        // Ensure at least two vowels are chosen
+        let chosenLetters = vocales.slice(0, 2);
+    
+        // Calculate number of remaining letters needed
+        const remainingLetters = Math.max(0, averageLength - 2);
+    
+        // Choose remaining letters following percentage
+        for (let i = 0; i < remainingLetters; i++) {
+            let random = Math.random();
+            let letter;
+            if (random < 0.7) {
+                letter = getRandomLetter(consonantesMuyUsadas);
+            } else if (random < 0.9) {
+                letter = getRandomLetter(consonantesPocoUsadas);
+            } else {
+                letter = getRandomLetter(vocales);
+            }
+            chosenLetters.push(letter);
+        }
+    
+        return chosenLetters;
+    }
+    
+    getRandomLetter(letters) {
+        const index = Math.floor(Math.random() * letters.length);
+        return letters.splice(index, 1)[0];
     }
   
     consultaTempsRestant() {
