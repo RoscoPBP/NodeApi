@@ -71,14 +71,16 @@ class Joc {
         const consonantesMuyUsadas = ['L', 'N', 'S', 'T', 'R'];
         const consonantesPocoUsadas = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z'];
     
-        // Ensure at least two vowels are chosen
-        let chosenLetters = [this.getRandomLetter(vocales), this.getRandomLetter(vocales)];
-    
-        // Calculate number of remaining letters needed
-        const remainingLetters = Math.max(0, averageLength - 2);
-    
-        // Choose remaining letters following percentage
-        for (let i = 0; i < remainingLetters; i++) {
+        let chosenLetters = [];
+        while (chosenLetters.length < 2) {
+            let letter = this.getRandomLetter(vocales)
+            if (letter != null) {
+                chosenLetters.push(letter);
+            }
+        }
+
+        while (chosenLetters.length < averageLength) {
+            
             let random = Math.random();
             let letter;
             if (random < 0.7) {
@@ -88,7 +90,11 @@ class Joc {
             } else {
                 letter = this.getRandomLetter(vocales);
             }
-            chosenLetters.push(letter);
+            if (letter != null) {
+                chosenLetters.push(letter);
+            }
+
+            console.log(chosenLetters);
         }
     
         return chosenLetters;
@@ -100,7 +106,8 @@ class Joc {
             return null;
         }
         const index = Math.floor(Math.random() * letters.length);
-        const letter = letters.splice(index, 1)[0];
+        const letter = letters[index];
+        letters.splice(index, 1);
         return letter;
     }
   
