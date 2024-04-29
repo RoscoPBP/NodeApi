@@ -38,23 +38,21 @@ class Joc {
 
     async getWordAvgLenght(language) {
         const WordSchema = getWordSchema(language);
+    
         const averageLengthResult = await WordSchema.aggregate([
-        {
-            $match: { position: { $gte: min, $lte: max } }
-        },
-        {
-            $group: {
-            _id: null,
-            totalLength: { $sum: { $strLenCP: "$word" } },
-            count: { $sum: 1 }
+            {
+                $group: {
+                    _id: null,
+                    totalLength: { $sum: { $strLenCP: "$word" } },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    averageLength: { $divide: ["$totalLength", "$count"] }
+                }
             }
-        },
-        {
-            $project: {
-            _id: 0,
-            averageLength: { $divide: ["$totalLength", "$count"] }
-            }
-        }
         ]);
         
         const averageLength = averageLengthResult[0].averageLength;
