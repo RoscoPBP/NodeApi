@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
       });
 
       if (nickname && apiKey) {
-          const resposta = await joc.altaJugador(nickname, apiKey);
+          const resposta = await joc.altaJugador(nickname, apiKey, socket.id);
           console.log(resposta);
           socket.emit('ALTA', resposta);
       } else {

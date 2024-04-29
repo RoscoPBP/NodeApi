@@ -18,7 +18,17 @@ socket.on('connect', () => {
 // Gestiona la resposta del servidor
 socket.on('TEMPS_PER_INICI', (data) => {
   console.log(`\nTemps restant per l'inici: ${data.tempsRestant} ms, En Partida: ${data.enPartida ? 'Sí' : 'No'}`);
-  mostrarMenu();
+  //mostrarMenu();
+});
+
+socket.on('ALTA', (data) => {
+  console.log(data);
+  //mostrarMenu();
+});
+
+socket.on('INICI_PARTIDA', (data) => {
+  console.log(data);
+  //mostrarMenu();
 });
 
 socket.on('disconnect', () => {

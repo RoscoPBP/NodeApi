@@ -6,6 +6,8 @@ class Joc {
       this.pausaDuracio = pausaDuracio;
       this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
       this.enPartida = false;
+      this.playersJugant = [];
+      this.playersEspera = [];
       this.iniciarCicle();
     }
   
@@ -17,6 +19,11 @@ class Joc {
         } else {
           this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
           this.enPartida = true;
+          // Send "GAME START" message to players in the playersEspera list
+          this.playersEspera.forEach(player => {
+            const { socketId } = player;
+            io.to(socketId).emit('INICI_PARTIDA', 'a,b,c,d,f,g,h');
+          });
         }
       }, this.partidaDuracio + this.pausaDuracio);
     }
@@ -26,10 +33,11 @@ class Joc {
       return { tempsRestant, enPartida: this.enPartida };
     }
 
-    async altaJugador(name, apiKey) {
+    async altaJugador(name, apiKey, sockerId) {
         const user = await User.findOne({ api_key: apiKey, name: name });
 
         if (user) {
+            this.playersEspera.push({socketId: sockerId, user: user});
             return { alta: true };
         } else {
             return { alta: false };
