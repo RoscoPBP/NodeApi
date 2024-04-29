@@ -59,7 +59,7 @@ class Joc {
 
         console.log("Average word length:", averageLength);
 
-        const onlineAttribute = Math.round(averageLength * (0.7 + Math.random() * 0.6)); // Random value between 0.7 and 1.3
+        const onlineAttribute = Math.round(averageLength * (0.7 + Math.random() * 0.6));
 
         console.log("Online attribute:", onlineAttribute);
 
@@ -67,6 +67,7 @@ class Joc {
     }
 
     chooseLetters() {
+        console.log(this.averageLenght);
         const vocales = ['A', 'E', 'I', 'O', 'U'];
         const consonantesMuyUsadas = ['L', 'N', 'S', 'T', 'R'];
         const consonantesPocoUsadas = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z'];
