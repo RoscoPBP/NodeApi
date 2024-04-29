@@ -11,7 +11,11 @@ class Joc {
       this.playersJugant = [];
       this.playersEspera = [];
       this.iniciarCicle();
-      this.averageLenght = this.getWordAvgLenght(language)
+      
+      // Await the asynchronous method call
+      this.getWordAvgLenght(language).then(averageLength => {
+        this.averageLenght = averageLength;
+      });
     }
   
     iniciarCicle() {
