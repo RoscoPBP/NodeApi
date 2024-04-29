@@ -27,7 +27,7 @@ class Joc {
           console.log("Empezando partida | enviando a jugadores");
           this.playersEspera.forEach(player => {
             const { socketId } = player;
-            const letters = this.chooseLetters(this.averageLenght);
+            const letters = this.chooseLetters();
             console.log(letters);
             this.websocket.to(socketId).emit('INICI_PARTIDA', letters)});
 
@@ -66,21 +66,21 @@ class Joc {
         return onlineAttribute;
     }
 
-    chooseLetters(averageLength) {
+    chooseLetters() {
         const vocales = ['A', 'E', 'I', 'O', 'U'];
         const consonantesMuyUsadas = ['L', 'N', 'S', 'T', 'R'];
         const consonantesPocoUsadas = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z'];
-    
         let chosenLetters = [];
         while (chosenLetters.length < 2) {
+            console.log("bucle  1")
             let letter = this.getRandomLetter(vocales)
             if (letter != null) {
                 chosenLetters.push(letter);
             }
         }
 
-        while (chosenLetters.length < averageLength) {
-            
+        while (chosenLetters.length < this.averageLenght) {
+            console.log("bucle  2")
             let random = Math.random();
             let letter;
             if (random < 0.7) {
@@ -94,7 +94,6 @@ class Joc {
                 chosenLetters.push(letter);
             }
 
-            console.log(chosenLetters);
         }
     
         return chosenLetters;
