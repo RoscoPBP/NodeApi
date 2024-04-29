@@ -11,7 +11,7 @@ class Joc {
       this.playersJugant = [];
       this.playersEspera = [];
       this.iniciarCicle();
-      this.averageLenght = getWordAvgLenght(language)
+      this.averageLenght = this.getWordAvgLenght(language)
     }
   
     iniciarCicle() {
