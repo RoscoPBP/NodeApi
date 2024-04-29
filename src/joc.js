@@ -27,12 +27,12 @@ class Joc {
     }
 
     async altaJugador(name, apiKey) {
-        const user = await User.findOne({ api_key:apiKey, name:name});
+        const user = await User.findOne({ api_key: apiKey, name: name });
         
-        if (!user) {
-            return { alta : true};
+        if (user) {
+            return { alta: true };
         } else {
-            return { alta : false};
+            return { alta: false };
         }
     }
   }
