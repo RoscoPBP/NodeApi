@@ -7,7 +7,7 @@ const dbManager = require('./mongoManager');
 const server = http.createServer(app);
 const io = new Server(server);
 
-const joc = new Joc(5000, 5000, io, "CA");  // 1 minut de partida, 1 minut de pausa
+const joc = new Joc(60000, 60000, io, "CA");  // 1 minut de partida, 1 minut de pausa
 
 io.on('connection', (socket) => {
   console.log('Usuari connectat');
