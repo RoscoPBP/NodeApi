@@ -26,12 +26,12 @@ class Joc {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
-          this.playersJugant.forEach(player => {
-                const { socketId } = player;
-                const letters = this.chooseLetters();
-                console.log(letters);
-                this.websocket.sockets.sockets[socketId].disconnect(true);
+          console.log("FIN del game, desconectando clientes...")
+           // Disconnect all clients
+            this.websocket.clients.forEach(client => {
+                client.terminate(); // Close the connection
             });
+
           this.enPartida = false;
         } else {
 
