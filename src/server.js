@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
       }
   });
 
-  socket.on('PARAULA', (data) => {
+  socket.on('PARAULA', async (data) => {
     const parts = data.split(';');
     let paraula, apiKey;
     response = {};
@@ -63,8 +63,8 @@ io.on('connection', (socket) => {
     // Now you have both variables available
     console.log("Paraula:", paraula);
     console.log("API Key:", apiKey);
-    const exists = dbManager.wordExists("CA", paraula)
-
+    const exists = await dbManager.wordExists("CA", paraula)
+    console.log("Paraula existeix: "+exists)
     if (exists === true) {
       response.wordExists = true;
       response.value = joc.calculateWordValue(paraula);
