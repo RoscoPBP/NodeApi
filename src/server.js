@@ -3,7 +3,7 @@ const Joc = require('./joc.js');
 const app = require('./app');
 const http = require('http');
 const { Server } = require('socket.io');
-
+const dbManager = require('./mongoManager');
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -45,9 +45,32 @@ io.on('connection', (socket) => {
       }
   });
 
-  socket.on('PARAULA', () => {
-    console.log("en PARAULA")
-    socket.emit('PARAULA', "desde PARAULA");
+  socket.on('PARAULA', (data) => {
+    const parts = data.split(';');
+    let paraula, apiKey;
+    response = {};
+    response.wordExists = false;
+
+    parts.forEach(part => {
+        const [key, value] = part.split('=');
+        if (key === 'PARAULA') {
+            paraula = value;
+        } else if (key === 'API_KEY') {
+            apiKey = value;
+        }
+    });
+
+    // Now you have both variables available
+    console.log("Paraula:", paraula);
+    console.log("API Key:", apiKey);
+    const exists = dbManager.wordExists("CA", paraula)
+
+    if (exists) {
+      response.wordExists = exists;
+      response.value = joc.calculateWordValue(paraula);
+    } 
+
+    socket.emit("PARAULA_OK", response);
   });
 
   socket.onAny((event, ...args) => {

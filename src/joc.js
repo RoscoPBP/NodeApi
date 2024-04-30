@@ -16,27 +16,38 @@ class Joc {
       this.getWordAvgLenght(language).then(averageLength => {
         this.averageLenght = averageLength;
       });
+
+      this.getWordAvgTimesUsed(language).then(timesUsed => {
+        this.timesUsed = timesUsed;
+    });
     }
   
     iniciarCicle() {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
-          this.playersEspera = this.playersEspera.concat(this.playersJugant);
+          this.playersJugant.forEach(player => {
+                const { socketId } = player;
+                const letters = this.chooseLetters();
+                console.log(letters);
+                this.websocket.sockets.sockets[socketId].disconnect(true);
+            });
           this.enPartida = false;
         } else {
+
           this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
           this.enPartida = true;
-          // Send "GAME START" message to players in the playersEspera list
+
           console.log("Empezando partida | enviando a jugadores");
           this.playersEspera.forEach(player => {
             const { socketId } = player;
             const letters = this.chooseLetters();
             console.log(letters);
-            this.websocket.to(socketId).emit('INICI_PARTIDA', letters)});
+            this.websocket.to(socketId).emit('INICI_PARTIDA', {letters:letters})});
 
           this.playersJugant = this.playersEspera;
           this.playersEspera = [];
+
         }
       }, this.partidaDuracio + this.pausaDuracio);
     }
@@ -70,6 +81,36 @@ class Joc {
         return onlineAttribute;
     }
 
+    async getWordAvgTimesUsed(language) {
+        const WordSchema = getWordSchema(language);
+    
+        const averageTimesUsedResult = await WordSchema.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalTimesUsed: { $sum: "$timesUsed" },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    averageTimesUsed: { $divide: ["$totalTimesUsed", "$count"] }
+                }
+            }
+        ]);
+    
+        const averageTimesUsed = averageTimesUsedResult[0].averageTimesUsed;
+    
+        console.log("Average times used:", averageTimesUsed);
+    
+        const onlineAttribute = averageTimesUsed + 1;
+    
+        console.log("Online attribute based on times used:", onlineAttribute);
+    
+        return onlineAttribute;
+    }
+
     chooseLetters() {
         console.log(this.averageLenght);
         const vocales = ['A', 'E', 'I', 'O', 'U'];
@@ -77,7 +118,6 @@ class Joc {
         const consonantesPocoUsadas = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z'];
         let chosenLetters = [];
         while (chosenLetters.length < 2) {
-            console.log("bucle  1")
             let letter = this.getRandomLetter(vocales)
             if (letter != null) {
                 chosenLetters.push(letter);
@@ -85,7 +125,6 @@ class Joc {
         }
 
         while (chosenLetters.length < this.averageLenght) {
-            console.log("bucle  2")
             let random = Math.random();
             let letter;
             if (random < 0.7) {
@@ -130,6 +169,40 @@ class Joc {
         } else {
             return { alta: false };
         }
+    }
+
+    calculateWordValue(word) {
+        const rarityValues = {
+            'A': 1, 'E': 1, 'I': 1, 'L': 1, 'N': 1, 'O': 1, 'R': 1, 'S': 1, 'T': 1, 'U': 1,
+            'D': 2, 'G': 2,
+            'B': 3, 'C': 3, 'M': 3, 'P': 3,
+            'Ç': 4, 'F': 4, 'H': 4, 'V': 4, 'Y': 4,
+            'K': 5,
+            'J': 8, 'X': 8,
+            'Q': 10, 'W': 10, 'Z': 10
+        };
+    
+        let totalValue = 0;
+    
+        // Iterate through each letter of the word
+        for (const letter of word.toUpperCase()) {
+            if (rarityValues.hasOwnProperty(letter)) {
+                // Add the value of the letter to the total value
+                totalValue += rarityValues[letter];
+            }
+        }
+    
+        // Check if timesUsed is lower than the average + 1, and add 3 points if it is
+        if (this.timesUsed !== null && word.timesUsed < this.timesUsed + 1) {
+            totalValue += 3;
+        }
+    
+        // Multiply the total value by 1.4 if the word's length is greater than the average length
+        if (this.averageLenght !== null && word.length > this.averageLenght) {
+            totalValue *= 1.4;
+        }
+    
+        return totalValue;
     }
   }
 

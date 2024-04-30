@@ -7,6 +7,7 @@ const User = require('./api/models/user');
 const Img = require('./api/models/image');
 
 const { throws } = require('assert');
+const getWordSchema = require('./api/models/word');
 
 function processUser(user) {
     const processed = {
@@ -88,7 +89,19 @@ function generateApiKey(length = 64) {
     return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
 }
 
+async function wordExists(language ,wordString) {
+    let WordSchema = getWordSchema(language);
+    const word = await WordSchema.findOne({ word: wordString});
+
+    if (word) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 module.exports = {
     startUserInsertProcess,
-    generateApiKey
+    generateApiKey,
+    wordExists
 };
