@@ -26,11 +26,7 @@ class Joc {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
-          console.log("FIN del game, desconectando clientes...")
-           // Disconnect all clients
-            this.websocket.clients.forEach(client => {
-                client.terminate(); // Close the connection
-            });
+          console.log("FIN del game");
 
           this.enPartida = false;
         } else {
