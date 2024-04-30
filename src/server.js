@@ -65,8 +65,8 @@ io.on('connection', (socket) => {
     console.log("API Key:", apiKey);
     const exists = dbManager.wordExists("CA", paraula)
 
-    if (exists) {
-      response.wordExists = exists;
+    if (exists === true) {
+      response.wordExists = true;
       response.value = joc.calculateWordValue(paraula);
     } 
 

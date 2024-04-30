@@ -198,7 +198,7 @@ class Joc {
             totalValue *= 1.4;
         }
     
-        return totalValue;
+        return Math.floor(totalValue);
     }
   }
 
