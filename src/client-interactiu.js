@@ -31,6 +31,11 @@ socket.on('INICI_PARTIDA', (data) => {
   //mostrarMenu();
 });
 
+socket.on('PARAULA_OK', (data) => {
+  console.log(data);
+  //mostrarMenu();
+});
+
 socket.on('disconnect', () => {
   console.log('Desconnectat del servidor');
   process.exit();
