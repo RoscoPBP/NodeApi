@@ -18,7 +18,6 @@ io.on('connection', (socket) => {
   }, 10000);  // Envia el temps restant cada 10 segons
 
   socket.on('TEMPS_PER_INICI', () => {
-    console.log("en TEMPS_PER_INICI")
     const resposta = joc.consultaTempsRestant();
     socket.emit('TEMPS_PER_INICI', resposta);
   });
