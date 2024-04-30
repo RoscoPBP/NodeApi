@@ -33,12 +33,12 @@ class Joc {
 
           this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
           this.enPartida = true;
-
+          const letters = this.chooseLetters();
+          console.log(letters);
           console.log("Empezando partida | enviando a jugadores");
           this.playersEspera.forEach(player => {
             const { socketId } = player;
-            const letters = this.chooseLetters();
-            console.log(letters);
+            
             this.websocket.to(socketId).emit('INICI_PARTIDA', {letters:letters})});
 
           this.playersJugant = this.playersEspera;
