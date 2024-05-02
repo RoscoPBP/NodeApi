@@ -1,5 +1,7 @@
 const User = require('./api/models/user');
 const getWordSchema = require('./api/models/word');
+const formatDate = require('./server');
+const Server = require('./server');
 
 class Joc {
     constructor(partidaDuracio, pausaDuracio, websocket, language) {
@@ -10,6 +12,7 @@ class Joc {
       this.websocket = websocket;
       this.playersJugant = [];
       this.playersEspera = [];
+      this.gameObject = {};
       this.iniciarCicle();
       
       // Await the asynchronous method call
@@ -26,8 +29,19 @@ class Joc {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
+          this.gameObject.endDate = formatDate(Date.now());
           console.log("FIN del game");
-
+          // AQUI SE DEBERIA DE PROCESSAR Y GUARDAR EL OBJECTO EN MONGODB ANTES DE ELIMINARLO
+          console.log(JSON.stringify(this.gameObject));
+        
+          this.playersJugant.forEach(player => {
+            const { socketId } = player;
+            
+            const socket = this.websocket.sockets.sockets.get(socketId);
+            socket.disconnect();
+        });
+        
+          this.gameObject = {};
           this.enPartida = false;
         } else {
 
@@ -44,6 +58,13 @@ class Joc {
           this.playersJugant = this.playersEspera;
           this.playersEspera = [];
 
+          this.gameObject.startData = formatDate(Date.now());
+          this.gameObject.type = "multiplayer";
+          this.gameObject.dictionaryCode = 'CA';
+          this.gameObject.players = [];
+          this.gameObject.words = [];
+          this.gameObject.letters = letters;
+          
         }
       }, this.partidaDuracio);
     }
@@ -200,6 +221,7 @@ class Joc {
     
         return Math.floor(totalValue);
     }
+    
   }
 
   module.exports = Joc;
