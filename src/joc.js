@@ -5,7 +5,7 @@ class Joc {
     constructor(partidaDuracio, pausaDuracio, websocket, language) {
       this.partidaDuracio = partidaDuracio;
       this.pausaDuracio = pausaDuracio;
-      this.properInici = Date.now() + this.partidaDuracio + this.pausaDuracio;
+      this.properInici = Date.now() + this.pausaDuracio;
       this.enPartida = false;
       this.websocket = websocket;
       this.playersJugant = [];
@@ -45,7 +45,7 @@ class Joc {
           this.playersEspera = [];
 
         }
-      }, this.partidaDuracio + this.pausaDuracio);
+      }, this.partidaDuracio);
     }
 
     async getWordAvgLenght(language) {

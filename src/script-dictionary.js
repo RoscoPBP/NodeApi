@@ -3,9 +3,8 @@ const readline = require('readline');
 const dbConfig = require('./config/db');
 const mongoose = require('mongoose');
 
-const dictionaryPath = '/root/NodeApi/data/DISC2/DISC2-LP.txt';
-
-const language = "ES";
+const dictionaryPath = '/home/patricio/Escritorio/roscodrom_proyecto/NodeServer/PJ03-NodeJS-Base/data/DISC2-LP/DISC2/DISC2-LP.txt';
+const language = "CA";
 
 // Define the Mongoose schema for posts
 const WordSchema = new mongoose.Schema({
