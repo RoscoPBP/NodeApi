@@ -222,4 +222,17 @@ app.get('/api/events/:id', async (req, res) => {
   }
 });
 
+// Volcado de users data
+app.get('/api/list/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    if (!users) {
+      return res.status(404).send("No hay users");
+    }
+    res.send(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 module.exports = app;
