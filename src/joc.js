@@ -1,7 +1,6 @@
 const User = require('./api/models/user');
 const getWordSchema = require('./api/models/word');
 const formatDate = require('./server');
-const Server = require('./server');
 
 class Joc {
     constructor(partidaDuracio, pausaDuracio, websocket, language) {
@@ -29,7 +28,7 @@ class Joc {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
-          this.gameObject.endDate = formatDate(Date.now());
+          //this.gameObject.endDate = formatDate(Date.now());
           console.log("FIN del game");
           // AQUI SE DEBERIA DE PROCESSAR Y GUARDAR EL OBJECTO EN MONGODB ANTES DE ELIMINARLO
           console.log(JSON.stringify(this.gameObject));
@@ -58,7 +57,7 @@ class Joc {
           this.playersJugant = this.playersEspera;
           this.playersEspera = [];
 
-          this.gameObject.startData = formatDate(Date.now());
+          //this.gameObject.startData = formatDate(Date.now());
           this.gameObject.type = "multiplayer";
           this.gameObject.dictionaryCode = 'CA';
           this.gameObject.players = [];
