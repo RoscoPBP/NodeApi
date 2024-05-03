@@ -6,8 +6,9 @@ const { Server } = require('socket.io');
 const dbManager = require('./mongoManager');
 const server = http.createServer(app);
 const io = new Server(server);
+const User = require('./api/models/user');
 
-const joc = new Joc(20000, 20000, io, "CA");  // 1 minut de partida, 1 minut de pausa
+const joc = new Joc(10000, 10000, io, "CA");  // 1 minut de partida, 1 minut de pausa
 
 io.on('connection', (socket) => {
   console.log('Usuari connectat');
@@ -50,6 +51,11 @@ io.on('connection', (socket) => {
     response = {};
     response.wordExists = false;
 
+    if (joc.enPartida === false) {
+      socket.emit("PARAULA_OK", response);
+      return;
+    }
+
     parts.forEach(part => {
         const [key, value] = part.split('=');
         if (key === 'PARAULA') {
@@ -62,11 +68,33 @@ io.on('connection', (socket) => {
     // Now you have both variables available
     console.log("Paraula:", paraula);
     console.log("API Key:", apiKey);
-    const exists = await dbManager.wordExists("CA", paraula)
-    console.log("Paraula existeix: "+exists)
-    if (exists === true) {
+
+    const user = await User.findOne({ api_key: apiKey});
+
+    if (!user) {
+      response.wordExists = false;
+      socket.emit("PARAULA_OK", response);
+      return;
+    } 
+
+    const wordExists = await dbManager.wordExists("CA", paraula)
+
+    if (wordExists) {
       response.wordExists = true;
-      response.value = joc.calculateWordValue(paraula);
+      const value = joc.calculateWordValue(paraula);
+      console.log("players jugant =" + JSON.stringify(joc.playersJugant));
+      console.log("players esperant =" + JSON.stringify(joc.playersEspera));
+      const playerToUpdate = joc.playersJugant[socket.id];
+      
+      joc.gameObject.words.push({word:wordExists.word, wordUUID:wordExists._id, playerUUID:user.uuid})
+
+      console.log("socketId para poner puntos = "+socket.id);
+      if (playerToUpdate) {
+        console.log("ESTA ENCONTRANDO AL JUGADOR");
+        playerToUpdate.score = playerToUpdate.score + value; 
+      }
+
+      response.value = value;
     } 
 
     socket.emit("PARAULA_OK", response);
@@ -86,20 +114,8 @@ io.on('connection', (socket) => {
   });
 });
 
-function formatDate(date) {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
-  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-}
-
-const port = process.env.PORT || 80;
-//const port = process.env.PORT || 3000;
+//const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 server.listen(port, () => console.log(`Escoltant en el port ${port}...`));
 
 module.exports = joc;
-module.exports = formatDate;

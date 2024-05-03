@@ -8,10 +8,12 @@ const PlayerSchema = new mongoose.Schema({
 
 const WordSchema = new mongoose.Schema({
     word: String,
-    wordUUID: String
+    wordUUID: String,
+    playerUUID: String
 });
 
 const GameSchema = new mongoose.Schema({
+    UUID: String,
     type: String,
     startDate: String,
     endDate: String,
@@ -22,6 +24,6 @@ const GameSchema = new mongoose.Schema({
 });
 
 // Compile and export the Game model
-const Game = mongoose.model('Game', GameSchema);
+const Game = mongoose.model('Games', GameSchema);
 
 module.exports = Game;

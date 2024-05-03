@@ -1,6 +1,8 @@
 const User = require('./api/models/user');
+const Game = require('./api/models/games');
 const getWordSchema = require('./api/models/word');
-const formatDate = require('./server');
+const dbManager = require('./mongoManager');
+const { v4: uuidv4 } = require('uuid');
 
 class Joc {
     constructor(partidaDuracio, pausaDuracio, websocket, language) {
@@ -9,8 +11,12 @@ class Joc {
       this.properInici = Date.now() + this.pausaDuracio;
       this.enPartida = false;
       this.websocket = websocket;
-      this.playersJugant = [];
-      this.playersEspera = [];
+
+      // socket id: data
+      this.playersJugant = {};
+      this.playersEspera = {};
+      
+      this.gameUUID = "";
       this.gameObject = {};
       this.iniciarCicle();
       
@@ -28,17 +34,24 @@ class Joc {
       setInterval(() => {
         if (this.enPartida) {
           this.properInici = Date.now() + this.pausaDuracio;
-          //this.gameObject.endDate = formatDate(Date.now());
+          this.gameObject.endDate = this.formatDate(new Date(Date.now()));
           console.log("FIN del game");
           // AQUI SE DEBERIA DE PROCESSAR Y GUARDAR EL OBJECTO EN MONGODB ANTES DE ELIMINARLO
+          // SOLO SE GUARDA SI EL JUEGO TIENE AL MENOS 1 JUGADOR !!!
           console.log(JSON.stringify(this.gameObject));
-        
-          this.playersJugant.forEach(player => {
-            const { socketId } = player;
-            
-            const socket = this.websocket.sockets.sockets.get(socketId);
-            socket.disconnect();
-        });
+          console.log(this.gameObject.players.length)
+
+          if (this.gameObject.players.length > 0) {
+            dbManager.insertGame(this.gameObject)
+          }
+          
+
+          Object.keys(this.playersJugant).forEach(socketId => {
+                const socket = this.websocket.sockets.sockets.get(socketId);
+                if (socket) {
+                    socket.disconnect();
+                }
+            });
         
           this.gameObject = {};
           this.enPartida = false;
@@ -49,18 +62,32 @@ class Joc {
           const letters = this.chooseLetters();
           console.log(letters);
           console.log("Empezando partida | enviando a jugadores");
-          this.playersEspera.forEach(player => {
-            const { socketId } = player;
+
+          this.gameObject.players = [];
+
+          this.gameUUID = uuidv4();
+          this.gameObject.UUID = gameUUID;
+          /*this.playersEspera.forEach(player => {
+            const { socketId, userData } = player;
+            this.gameObject.players.push(userData);
+            this.websocket.to(socketId).emit('INICI_PARTIDA', {letters:letters})});*/
+        
+            Object.keys(this.playersEspera).forEach(socketId => {
+                const socket = this.websocket.sockets.sockets.get(socketId);
+                if (socket) {
+                    this.websocket.to(socket).emit('INICI_PARTIDA', {letters:letters});
+                    this.gameObject.players.push(this.playersEspera[socketId]);
+                }
+            });
             
-            this.websocket.to(socketId).emit('INICI_PARTIDA', {letters:letters})});
-
           this.playersJugant = this.playersEspera;
-          this.playersEspera = [];
+          this.playersEspera = {};
 
-          //this.gameObject.startData = formatDate(Date.now());
+          this.gameObject.startDate = this.formatDate(new Date());
           this.gameObject.type = "multiplayer";
           this.gameObject.dictionaryCode = 'CA';
-          this.gameObject.players = [];
+
+          
           this.gameObject.words = [];
           this.gameObject.letters = letters;
           
@@ -179,7 +206,9 @@ class Joc {
         const user = await User.findOne({ api_key: apiKey, name: name });
 
         if (user) {
-            this.playersEspera.push({socketId: sockerId, user: user});
+            //this.playersEspera.push({socketId: sockerId, userData: {name: user.name, uuid:user.uuid, score:0}});
+            this.playersEspera[sockerId] = {name: user.name, uuid:user.uuid, score:0};
+            console.log("socketId alta = "+sockerId);
             console.log(sockerId);
             return { alta: true };
         } else {
@@ -219,6 +248,21 @@ class Joc {
         }
     
         return Math.floor(totalValue);
+    }
+
+    formatDate(date) {
+        const day = this.padZero(date.getDate());
+        const month = this.padZero(date.getMonth() + 1); // Adding 1 because getMonth() returns zero-based month index
+        const year = date.getFullYear();
+        const hours = this.padZero(date.getHours());
+        const minutes = this.padZero(date.getMinutes());
+        const seconds = this.padZero(date.getSeconds());
+        
+        return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    }
+    
+    padZero(num) {
+        return num.toString().padStart(2, '0');
     }
     
   }

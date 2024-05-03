@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const User = require('./api/models/user');
 const Img = require('./api/models/image');
+const Game = require('./api/models/games');
 
 const { throws } = require('assert');
 const getWordSchema = require('./api/models/word');
@@ -26,6 +27,37 @@ function processImage(user) {
         base64: String(user.avatar)
     };
     return processed;
+}
+
+// Function to process a game object
+function processGame(game) {
+    // Process players array
+    const processedPlayers = game.players.map(player => ({
+        name: String(player.name),
+        uuid: String(player.uuid),
+        score: Number(player.score)
+    }));
+
+    // Process words array
+    const processedWords = game.words.map(word => ({
+        word: String(word.word),
+        wordUUID: String(word.wordUUID),
+        playerUUID: String(word.playerUUID)
+    }));
+
+    // Construct the processed game object
+    const processedGame = {
+        UUID: String(game.UUID),
+        type: String(game.type),
+        startDate: String(game.startDate),
+        endDate: String(game.endDate),
+        dictionaryCode: String(game.dictionaryCode),
+        players: processedPlayers,
+        letters: game.letters.map(String), // Assuming letters are already strings
+        words: processedWords
+    };
+
+    return processedGame;
 }
 
 async function startUserInsertProcess(user) {
@@ -85,6 +117,16 @@ async function insertImage(user) {
     await Img.updateOne({ userUUID: processedImg.userUUID }, processedImg, { upsert: true });
 }
 
+/*async function insertWord(word, language) {
+    let WordSchema = getWordSchema(language);
+    await WordSchema.updateOne({ userUUID: processedImg.userUUID }, processedImg, { upsert: true });
+}*/
+
+async function insertGame(rawGame) {
+    const processedGame = processGame(rawGame);
+    await Game.create(processedGame);
+}
+
 function generateApiKey(length = 64) {
     return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
 }
@@ -94,7 +136,11 @@ async function wordExists(language ,wordString) {
     const word = await WordSchema.findOne({ word: wordString});
 
     if (word) {
-        return true;
+        word.timesUsed += 1;
+        console.log("updateado");
+        WordSchema.updateOne(word);
+
+        return word;
     } else {
         return false;
     }
@@ -103,5 +149,6 @@ async function wordExists(language ,wordString) {
 module.exports = {
     startUserInsertProcess,
     generateApiKey,
-    wordExists
+    wordExists,
+    insertGame
 };
