@@ -29,6 +29,13 @@ function processImage(user) {
     return processed;
 }
 
+function processAction(action) {
+    const processed = {
+
+    };
+    return processAction
+}
+
 // Function to process a game object
 function processGame(game) {
     // Process players array
@@ -124,7 +131,11 @@ async function insertImage(user) {
 
 async function insertGame(rawGame) {
     const processedGame = processGame(rawGame);
-    await Game.create(processedGame);
+    await Game.updateOne(processedGame, { upsert: true });
+}
+
+async function insertAction(rawAction) {
+    //
 }
 
 function generateApiKey(length = 64) {

@@ -225,6 +225,19 @@ app.get('/api/events/:id', async (req, res) => {
   }
 });
 
+// Conseguir informacion de la partida en juego
+app.get('/api/game/info', async (req, res) => {
+  let data = {};
+  try {
+    data.enPartida = Joc.enPartida;
+    data.data = Joc.gameObject;
+
+    res.send(data);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 // Volcado de users data
 app.get('/api/list/users', async (req, res) => {
   try {

@@ -44,7 +44,6 @@ class Joc {
           if (this.gameObject.players.length > 0) {
             dbManager.insertGame(this.gameObject)
           }
-          
 
           Object.keys(this.playersJugant).forEach(socketId => {
                 const socket = this.websocket.sockets.sockets.get(socketId);
@@ -66,7 +65,7 @@ class Joc {
           this.gameObject.players = [];
 
           this.gameUUID = uuidv4();
-          this.gameObject.UUID = gameUUID;
+          this.gameObject.UUID = this.gameUUID;
           /*this.playersEspera.forEach(player => {
             const { socketId, userData } = player;
             this.gameObject.players.push(userData);
@@ -90,6 +89,10 @@ class Joc {
           
           this.gameObject.words = [];
           this.gameObject.letters = letters;
+
+          if (this.gameObject.players.length > 0) {
+            dbManager.insertGame(this.gameObject)
+          }
           
         }
       }, this.partidaDuracio);
