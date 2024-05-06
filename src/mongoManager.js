@@ -157,9 +157,14 @@ async function wordExists(language ,wordString) {
     }
 }
 
+function getGameObject() {
+
+}
+
 module.exports = {
     startUserInsertProcess,
     generateApiKey,
     wordExists,
-    insertGame
+    insertGame,
+    getGameObject
 };

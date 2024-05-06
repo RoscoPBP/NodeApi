@@ -11,9 +11,13 @@ const dbManager = require('./mongoManager');
 const getWordSchema = require('./api/models/word');
 const Img = require('./api/models/image');
 const app = express();
+const Joc = require('./joc.js');
 
-// game instance
-const Joc = require('./server');
+const http = require('http');
+const { Server } = require('socket.io');
+const server = http.createServer(app);
+const io = new Server(server);
+const joc = new Joc(10000, 10000, io, "CA");  // 1 minut de partida, 1 minut de pausa
 
 // Use body-parser middleware with increased payload size limit
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -229,11 +233,11 @@ app.get('/api/events/:id', async (req, res) => {
 app.get('/api/game/data', async (req, res) => {
   let data = {};
   try {
-    data.enPartida = Joc.enPartida;
-    data.data = Joc.gameObject;
-
+    data.enPartida = joc.enPartida;
+    data.data = joc.gameObject;
     res.send(data);
   } catch (err) {
+    console.log(err);
     res.status(500).send(err.message);
   }
 });
@@ -251,4 +255,4 @@ app.get('/api/list/users', async (req, res) => {
   }
 });
 
-module.exports = app;
+module.exports = {app, joc, io, server};

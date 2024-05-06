@@ -1,14 +1,11 @@
 const Joc = require('./joc.js');
 
-const app = require('./app');
-const http = require('http');
-const { Server } = require('socket.io');
-const dbManager = require('./mongoManager');
-const server = http.createServer(app);
-const io = new Server(server);
-const User = require('./api/models/user');
+const {app, joc, io, server} = require('./app');
 
-const joc = new Joc(10000, 10000, io, "CA");  // 1 minut de partida, 1 minut de pausa
+const dbManager = require('./mongoManager');
+
+
+const User = require('./api/models/user');
 
 io.on('connection', (socket) => {
   console.log('Usuari connectat');
@@ -117,5 +114,3 @@ io.on('connection', (socket) => {
 const port = process.env.PORT || 80;
 //const port = process.env.PORT || 3000;
 server.listen(port, () => console.log(`Escoltant en el port ${port}...`));
-
-module.exports = joc;
