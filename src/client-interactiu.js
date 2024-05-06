@@ -8,7 +8,7 @@ const rl = readline.createInterface({
 });
 
 // Connecta al servidor
-const socket = io('http://127.0.0.1:3000');
+const socket = io('http://127.0.0.1:80');
 
 socket.on('connect', () => {
   console.log('Connectat al servidor');
@@ -27,6 +27,7 @@ socket.on('ALTA', (data) => {
 });
 
 socket.on('INICI_PARTIDA', (data) => {
+  console.log("INICIANDO PARTIDA")
   console.log(data);
   mostrarMenu();
 });
