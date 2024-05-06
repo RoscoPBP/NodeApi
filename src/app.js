@@ -19,7 +19,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server);
-const joc = new Joc(10000, 10000, io, "CA");  // 1 minut de partida, 1 minut de pausa
+const joc = new Joc(30000, 30000, io, "CA");  // 1 minut de partida, 1 minut de pausa
 
 // Use body-parser middleware with increased payload size limit
 app.use(bodyParser.json({ limit: '50mb' }));
