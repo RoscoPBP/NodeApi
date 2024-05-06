@@ -9,6 +9,7 @@ const Game = require('./api/models/games');
 
 const { throws } = require('assert');
 const getWordSchema = require('./api/models/word');
+const Action = require('./api/models/actions');
 
 function processUser(user) {
     const processed = {
@@ -31,9 +32,13 @@ function processImage(user) {
 
 function processAction(action) {
     const processed = {
-
+        gameUUID: String(action.gameUUID),
+        playerUUID: String(action.playerUUID),
+        type: String(action.type),
+        date:String(action.date),
+        data:String(action.data)
     };
-    return processAction
+    return processed
 }
 
 // Function to process a game object
@@ -130,12 +135,14 @@ async function insertImage(user) {
 }*/
 
 async function insertGame(rawGame) {
+    console.log("guardando partida")
     const processedGame = processGame(rawGame);
-    await Game.updateOne(processedGame, { upsert: true });
+    await Game.create(processedGame);
 }
 
 async function insertAction(rawAction) {
-    //
+    const processedAction = processAction(rawAction);
+    await Action.create(processedAction);
 }
 
 function generateApiKey(length = 64) {
@@ -157,14 +164,10 @@ async function wordExists(language ,wordString) {
     }
 }
 
-function getGameObject() {
-
-}
-
 module.exports = {
     startUserInsertProcess,
     generateApiKey,
     wordExists,
     insertGame,
-    getGameObject
+    insertAction
 };

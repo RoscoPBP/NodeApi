@@ -90,9 +90,9 @@ class Joc {
           this.gameObject.words = [];
           this.gameObject.letters = letters;
 
-          if (this.gameObject.players.length > 0) {
+          /*if (this.gameObject.players.length > 0) {
             dbManager.insertGame(this.gameObject)
-          }
+          }*/
           
         }
       }, this.partidaDuracio);
@@ -210,9 +210,11 @@ class Joc {
 
         if (user) {
             //this.playersEspera.push({socketId: sockerId, userData: {name: user.name, uuid:user.uuid, score:0}});
+            console.log(user);
             this.playersEspera[sockerId] = {name: user.name, uuid:user.uuid, score:0};
             console.log("socketId alta = "+sockerId);
             console.log(sockerId);
+            dbManager.insertAction({gameUUID:this.gameUUID, playerUUID:user.uuid, type: "ALTA", data:"Jugador se da de alta en la partida", date: this.formatDate(new Date(Date.now()))});
             return { alta: true };
         } else {
             return { alta: false };

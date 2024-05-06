@@ -1,5 +1,3 @@
-const Joc = require('./joc.js');
-
 const {app, joc, io, server} = require('./app');
 
 const dbManager = require('./mongoManager');
@@ -18,6 +16,7 @@ io.on('connection', (socket) => {
   socket.on('TEMPS_PER_INICI', () => {
     const resposta = joc.consultaTempsRestant();
     socket.emit('TEMPS_PER_INICI', resposta);
+    
   });
 
   socket.on('ALTA', async (data) => {
@@ -36,9 +35,10 @@ io.on('connection', (socket) => {
       if (nickname && apiKey) {
           const resposta = await joc.altaJugador(nickname, apiKey, socket.id);
           console.log(resposta);
+          resposta.tiempoRestante = joc.consultaTempsRestant();
           socket.emit('ALTA', resposta);
       } else {
-          socket.emit('ALTA', { alta: false });
+          socket.emit('ALTA', { alta: false, tiempoRestante: joc.consultaTempsRestant() });
       }
   });
 
@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
     let paraula, apiKey;
     response = {};
     response.wordExists = false;
+    response.value = 0;
 
     if (joc.enPartida === false) {
       socket.emit("PARAULA_OK", response);
@@ -77,24 +78,36 @@ io.on('connection', (socket) => {
     const wordExists = await dbManager.wordExists("CA", paraula)
 
     if (wordExists) {
-      response.wordExists = true;
-      const value = joc.calculateWordValue(paraula);
-      console.log("players jugant =" + JSON.stringify(joc.playersJugant));
-      console.log("players esperant =" + JSON.stringify(joc.playersEspera));
-      const playerToUpdate = joc.playersJugant[socket.id];
-      
-      joc.gameObject.words.push({word:wordExists.word, wordUUID:wordExists._id, playerUUID:user.uuid})
+      const isInWordsArray = joc.gameObject.words.some(wordObj => wordObj.word === paraula);
+      console.log("la palabras ya esta puesta = "+isInWordsArray);
 
-      console.log("socketId para poner puntos = "+socket.id);
-      if (playerToUpdate) {
-        console.log("ESTA ENCONTRANDO AL JUGADOR");
-        playerToUpdate.score = playerToUpdate.score + value; 
+      if (isInWordsArray === false) {
+        response.wordExists = true;
+        const value = joc.calculateWordValue(paraula);
+        console.log("players jugant =" + JSON.stringify(joc.playersJugant));
+        console.log("players esperant =" + JSON.stringify(joc.playersEspera));
+        const playerToUpdate = joc.playersJugant[socket.id];
+        
+        joc.gameObject.words.push({word:wordExists.word, wordUUID:wordExists._id, playerUUID:user.uuid})
+
+        dbManager.insertAction({gameUUID:joc.gameUUID, playerUUID:user.uuid, type: "PARAULA", data:"score obtenida: "+value, date: joc.formatDate(new Date(Date.now()))});
+        
+        // broadcast de palabras buena
+        io.emit("PARAULA_ACERTADA", JSON.stringify({user:user.name, paraula:wordExists.word}));
+
+        console.log("socketId para poner puntos = "+socket.id);
+        if (playerToUpdate) {
+          console.log("ESTA ENCONTRANDO AL JUGADOR");
+          playerToUpdate.score = playerToUpdate.score + value; 
+        }
+
+        response.value = value;
       }
-
-      response.value = value;
+      
     } 
 
     socket.emit("PARAULA_OK", response);
+
   });
 
   socket.onAny((event, ...args) => {

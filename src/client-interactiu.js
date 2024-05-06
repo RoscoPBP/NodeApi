@@ -36,6 +36,11 @@ socket.on('PARAULA_OK', (data) => {
   mostrarMenu();
 });
 
+socket.on('PARAULA_ACERTADA', (data) => {
+  console.log(data);
+  mostrarMenu();
+});
+
 socket.on('disconnect', () => {
   console.log('Desconnectat del servidor');
   process.exit();
