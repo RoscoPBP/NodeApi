@@ -70,14 +70,16 @@ class Joc {
             const { socketId, userData } = player;
             this.gameObject.players.push(userData);
             this.websocket.to(socketId).emit('INICI_PARTIDA', {letters:letters})});*/
-        
-            Object.keys(this.playersEspera).forEach(socketId => {
+            
+            io.emit('INICI_PARTIDA', {letters:letters});
+           /*Object.keys(this.playersEspera).forEach(socketId => {
                 const socket = this.websocket.sockets.sockets.get(socketId);
                 if (socket) {
                     this.websocket.to(socket).emit('INICI_PARTIDA', {letters:letters});
+                    this.websocket.
                     this.gameObject.players.push(this.playersEspera[socketId]);
                 }
-            });
+            });*/
             
           this.playersJugant = this.playersEspera;
           this.playersEspera = {};
