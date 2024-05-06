@@ -62,8 +62,6 @@ class Joc {
           console.log(letters);
           console.log("Empezando partida | enviando a jugadores");
 
-          this.gameObject.players = [];
-
           this.gameUUID = uuidv4();
           this.gameObject.UUID = this.gameUUID;
           /*this.playersEspera.forEach(player => {
@@ -83,6 +81,12 @@ class Joc {
             
           this.playersJugant = this.playersEspera;
           this.playersEspera = {};
+          this.gameObject.players = [];
+
+          for (let socketId in this.playersJugant) {
+                let playerInfo = this.playersJugant[socketId];
+                this.gameObject.players.push(playerInfo);
+            }
 
           this.gameObject.startDate = this.formatDate(new Date());
           this.gameObject.type = "multiplayer";
