@@ -6,6 +6,8 @@ const userRoutes = require('./api/routes/userRoutes');
 const Event = require('./api/models/event');
 const Word = require('./api/models/word');
 const User = require('./api/models/user');
+const Game = require('./api/models/games');
+const Action = require('./api/models/actions');
 const DictNames = require('./api/models/dictionary_names');
 const dbManager = require('./mongoManager');
 const getWordSchema = require('./api/models/word');
@@ -51,7 +53,7 @@ app.post('/api/user/register', async (req, res) => {
   console.log("en user/register")
   try {
     const body = (req.body);
-    //console.log("request body: "+JSON.stringify(body))
+    console.log("request body: "+JSON.stringify(body))
 
     const api_key = await dbManager.startUserInsertProcess(body);
     console.log("api key desde endpoint:"+api_key );
@@ -246,6 +248,32 @@ app.get('/api/game/data', async (req, res) => {
 app.get('/api/list/users', async (req, res) => {
   try {
     const users = await User.find();
+    if (!users) {
+      return res.status(404).send("No hay users");
+    }
+    res.send(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Volcado de users data
+app.get('/api/list/games', async (req, res) => {
+  try {
+    const users = await Game.find();
+    if (!users) {
+      return res.status(404).send("No hay users");
+    }
+    res.send(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Volcado de users data
+app.get('/api/list/actions', async (req, res) => {
+  try {
+    const users = await Action.find();
     if (!users) {
       return res.status(404).send("No hay users");
     }
