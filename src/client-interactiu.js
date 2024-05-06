@@ -27,7 +27,13 @@ socket.on('ALTA', (data) => {
 });
 
 socket.on('INICI_PARTIDA', (data) => {
-  console.log("INICIANDO PARTIDA")
+  console.log("\nINICIANDO PARTIDA")
+  console.log(data);
+  mostrarMenu();
+});
+
+socket.on('FI_PARTIDA', (data) => {
+  console.log("\nFI_PARTIDA")
   console.log(data);
   mostrarMenu();
 });

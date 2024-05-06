@@ -48,6 +48,7 @@ class Joc {
           Object.keys(this.playersJugant).forEach(socketId => {
                 const socket = this.websocket.sockets.sockets.get(socketId);
                 if (socket) {
+                    socket.emit('FI_PARTIDA', this.gameObject);
                     socket.disconnect();
                 }
             });
