@@ -71,7 +71,7 @@ class Joc {
             this.gameObject.players.push(userData);
             this.websocket.to(socketId).emit('INICI_PARTIDA', {letters:letters})});*/
             
-            this.io.emit('INICI_PARTIDA', {letters:letters});
+            this.websocket.emit('INICI_PARTIDA', {letters:letters});
            /*Object.keys(this.playersEspera).forEach(socketId => {
                 const socket = this.websocket.sockets.sockets.get(socketId);
                 if (socket) {
