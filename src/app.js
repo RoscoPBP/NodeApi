@@ -226,7 +226,7 @@ app.get('/api/events/:id', async (req, res) => {
 });
 
 // Conseguir informacion de la partida en juego
-app.get('/api/game/info', async (req, res) => {
+app.get('/api/game/data', async (req, res) => {
   let data = {};
   try {
     data.enPartida = Joc.enPartida;
