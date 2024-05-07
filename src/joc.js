@@ -177,7 +177,7 @@ class Joc {
             }
         }
 
-        while (chosenLetters.length < this.averageLenght) {
+        while (chosenLetters.length < 10) {
             let random = Math.random();
             let letter;
             if (random < 0.7) {
